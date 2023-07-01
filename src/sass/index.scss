@@ -1,2 +1,7 @@
 @import './common';
 @import './example';
+
+body {
+    max-width: 1440;
+    flex-wrap: wrap;
+}

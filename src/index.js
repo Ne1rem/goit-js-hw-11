@@ -8,7 +8,6 @@ const btnLoadMore = document.querySelector('.load-more');
 
 searchText.addEventListener('submit', searchPhotos)
 btnLoadMore.addEventListener('click', loadMore);
-
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionPosition: 'bottom',
@@ -39,7 +38,7 @@ function searchPhotos(find) {
   querySearch = find.currentTarget.searchQuery.value.trim();
   gallery.innerHTML = '';
   page = 1;
-  btnLoadMore.classList.add('hidden');
+
   gallery.style.display = 'none';
   render();
 
@@ -56,9 +55,10 @@ function searchPhotos(find) {
           "We're sorry, but you've reached the end of search results."
         );
       } else {
-        response.hits.forEach((photo) => {
-          showInfo(photo);
-        });
+          showInfo(response.hits);
+          gallery.style.display = 'flex';
+          gallery.style.flexWrap = 'wrap';
+          gallery.style.gap = '48px 24px';
         Notiflix.Notify.success(`Hooray! We found ${response.totalHits} images.`);
         lightbox.refresh();
         if (response.totalHits > perPage) {
@@ -71,19 +71,46 @@ function searchPhotos(find) {
   }
 }
 
-function showInfo(photo) {
-  const markup = `
-    <a class="gallery__link" href="${photo.largeImageURL}">
-      <div class="photo-card">
-        <img src="${photo.userImageURL}" alt="${photo.tags}" loading="lazy" />
-        <div class="info">
-          <p class="info-item"><b>Likes: ${photo.likes}</b></p>
-          <p class="info-item"><b>Views: ${photo.views}</b></p>
-          <p class="info-item"><b>Comments: ${photo.comments}</b></p>
-          <p class="info-item"><b>Downloads: ${photo.downloads}</b></p>
-        </div>
-      </div>
-    </a>`;
+function showInfo(images) {
+  const galleryMarkup = images.map(
+      ({
+          webformatURL,
+          largeImageURL,
+          tags,
+          likes,
+          views,
+          comments,
+          downloads,
+      }) => {
+          return `<a class="gallery__link" href="${largeImageURL}">
+          <div class="photo-card">
+              <img src="${webformatURL}" alt="${tags}" loading="lazy" height="100" />
+              <div class="info">
+              <p class="info-item"><b>Likes</b> ${likes}</p> 
+              <p class="info-item"><b>Views</b> ${views}</p>
+              <p class="info-item"><b>Comments</b> ${comments}</p>
+              <p class="info-item"><b>Downloads</b> ${downloads}</p>
+            </div>
+          </div>;
+          </a>`;
+      }).join('');
+  gallery.insertAdjacentHTML('beforeend', galleryMarkup);
 
-  gallery.insertAdjacentHTML('beforeend', markup);
+}    
+
+async function loadMore(){
+  page +=1
+  try {
+    const { data: response } = await toFetchImages(querySearch, page, perPage);
+    showInfo(response.hits);
+    lightbox.refresh();
+    const totalPages = Math.ceil(response.totalHits / perPage)
+    if (page === totalPages) {
+        btnLoadMore.classList.add('hidden');
+        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+    }
+}
+catch (error) {
+    console.log(error);
+}
 }
