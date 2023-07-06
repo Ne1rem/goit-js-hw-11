@@ -14,6 +14,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: '250',
 });
 
+gallery.style.display = 'none';
 let page = 1;
 let querySearch;
 const perPage = 40;
@@ -47,7 +48,7 @@ function searchPhotos(find) {
         Notiflix.Notify.success(`Hooray! We found ${response.totalHits} images.`);
         lightbox.refresh();
         if (response.totalHits > perPage) {
-          btnLoadMore.classList.remove('hidden');
+          gallery.style.display = 'block';
         }
       }
     } catch (error) {
@@ -64,7 +65,7 @@ async function loadMore(){
     lightbox.refresh();
     const totalPages = Math.ceil(response.totalHits / perPage)
     if (page === totalPages) {
-        btnLoadMore.classList.add('hidden');
+      gallery.style.display = 'none';
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
     }
 }
