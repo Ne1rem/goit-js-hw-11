@@ -1,6 +1,8 @@
 import axios from 'axios'
 import Notiflix from 'notiflix'
 import SimpleLightbox from "simplelightbox"
+import { toFetchImages } from './JS/toFetchImages';                    
+import { showInfo } from './JS/showInfo'
 
 const gallery = document.querySelector('.gallery');
 const searchText = document.querySelector('#search-form');
