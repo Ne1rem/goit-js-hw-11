@@ -4,8 +4,10 @@ import SimpleLightbox from "simplelightbox"
 const gallery = document.querySelector('.gallery');
 const searchText = document.querySelector('#search-form');
 const btnLoadMore = document.querySelector('.load-more');
+
 searchText.addEventListener('submit', searchPhotos)
 btnLoadMore.addEventListener('click', loadMore);
+
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionPosition: 'bottom',
