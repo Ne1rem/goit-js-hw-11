@@ -91,7 +91,7 @@ function showInfo(images) {
               <p class="info-item"><b>Comments</b> ${comments}</p>
               <p class="info-item"><b>Downloads</b> ${downloads}</p>
             </div>
-          </div>;
+          </div>
           </a>`
       }).join('');
   gallery.insertAdjacentHTML('beforeend', galleryMarkup);
