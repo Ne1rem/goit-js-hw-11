@@ -1,6 +1,9 @@
 import axios from 'axios'
 import Notiflix from 'notiflix'
 import SimpleLightbox from "simplelightbox"
+import {toFetchImages} from "./JS/toFetchImages"
+import {showInfo} from "./JS/showInfo"
+
 const gallery = document.querySelector('.gallery');
 const searchText = document.querySelector('#search-form');
 const btnLoadMore = document.querySelector('.load-more');
@@ -14,24 +17,10 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: '250',
 });
 
+btnLoadMore.style.display = 'none'
 let page = 1;
 let querySearch;
 const perPage = 40;
-
-const toFetchImages = async (querySearch, page, perPage) => {
-  const BASE_URL = 'https://pixabay.com/api/';
-  const params = new URLSearchParams({
-    key: '37953562-c7c28b8f0c02ebea23bfb706a',
-    q: querySearch,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    page: page,
-    per_page: perPage,
-  });
-  const response = await axios.get(`${BASE_URL}?${params.toString()}`);
-  return response;
-};
 
 function searchPhotos(find) {
   find.preventDefault();
@@ -39,7 +28,7 @@ function searchPhotos(find) {
   gallery.innerHTML = '';
   page = 1;
 
-  gallery.style.display = 'none';
+  gallery.style.display = 'none'
   render();
 
   async function render() {
@@ -62,7 +51,7 @@ function searchPhotos(find) {
         Notiflix.Notify.success(`Hooray! We found ${response.totalHits} images.`);
         lightbox.refresh();
         if (response.totalHits > perPage) {
-          btnLoadMore.classList.remove('hidden');
+          btnLoadMore.style.display = 'block'
         }
       }
     } catch (error) {
@@ -70,33 +59,6 @@ function searchPhotos(find) {
     }
   }
 }
-
-function showInfo(images) {
-  const galleryMarkup = images.map(
-      ({
-          webformatURL,
-          largeImageURL,
-          tags,
-          likes,
-          views,
-          comments,
-          downloads,
-      }) => {
-          return `<a class="gallery__link" href="${largeImageURL}">
-          <div class="photo-card">
-              <img src="${webformatURL}" alt="${tags}" loading="lazy" height="100" />
-              <div class="info">
-              <p class="info-item"><b>Likes</b> ${likes}</p> 
-              <p class="info-item"><b>Views</b> ${views}</p>
-              <p class="info-item"><b>Comments</b> ${comments}</p>
-              <p class="info-item"><b>Downloads</b> ${downloads}</p>
-            </div>
-          </div>
-          </a>`
-      }).join('');
-  gallery.insertAdjacentHTML('beforeend', galleryMarkup);
-
-}    
 
 async function loadMore(){
   page +=1
@@ -106,7 +68,7 @@ async function loadMore(){
     lightbox.refresh();
     const totalPages = Math.ceil(response.totalHits / perPage)
     if (page === totalPages) {
-        btnLoadMore.classList.add('hidden');
+      btnLoadMore.style.display = 'none'
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
     }
 }
