@@ -1,6 +1,9 @@
 @import './common';
 @import './example';
 
+.gallery__link{
+  text-decoration:none;
+}
 .photo-card p{
 color: white
 }
